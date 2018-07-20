@@ -1,0 +1,16 @@
+bc99481fb9f2039db700e4c60e15dce9 *DESCRIPTION
+1b65308c0464696fbcd23526a3db0558 *NAMESPACE
+c6e28d3981d464b6498d0d63f25216c5 *R/RcppExports.R
+b7ce1904310d540e07e0f46b1c75a2a4 *R/TDAstats.R
+5d7fe1c6e1b3ba086c077807febb857f *R/calculate.R
+de96259731bb510d472b577efb0b7b5f *R/inference.R
+8fa0c75d59f7b2f2dfe40522ddeddbaa *R/utility.R
+aa6a00f51008cf2cfc3a027fe5bde900 *R/visuals.R
+3522cfd42cc273d60fdd3e93df1b58fc *R/zzz.R
+f459547cb68c000dbbf7e789e1403e40 *man/TDAstats.Rd
+6d52f03832a076d3e6d6df437e208163 *man/calculate_homology.Rd
+e688e938c3d7065e4653f054dd932126 *man/permutation_test.Rd
+c37b547f8626cab1ad9c5fee6b59eed6 *man/plot_barcode.Rd
+3a297072e6b4d6bba26ca18e2467ccf1 *man/plot_persist.Rd
+0bd921a55ed62c5e3ae3578a86694bef *src/RcppExports.cpp
+f33d8471f25d44d0674154c97a4cb358 *src/ripser_short.cpp
