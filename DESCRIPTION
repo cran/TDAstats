@@ -1,7 +1,7 @@
 Package: TDAstats
 Type: Package
 Title: Pipeline for Topological Data Analysis
-Version: 0.1.0
+Version: 0.3.0
 Authors@R: c(
     person("Raoul", "Wadhwa", email = "raoulwadhwa@gmail.com", role = c("aut", "cre")),
     person("Andrew", "Dhawan", role = "aut"),
@@ -26,18 +26,21 @@ Description: A comprehensive toolset for any
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.4)
 Imports: ggplot2 (>= 2.2.1), Rcpp (>= 0.12.15)
 URL: https://github.com/rrrlw/TDAstats
 BugReports: https://github.com/rrrlw/TDAstats/issues
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 SystemRequirements: C++11
+Suggests: testthat (>= 2.0.0), knitr, rmarkdown
+VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2018-07-20 16:46:18 UTC; rrrlw
+Packaged: 2018-08-05 03:12:01 UTC; rrrlw
 Author: Raoul Wadhwa [aut, cre],
   Andrew Dhawan [aut],
   Drew Williamson [aut],
   Jacob Scott [aut]
 Maintainer: Raoul Wadhwa <raoulwadhwa@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-07-20 17:50:02 UTC
+Date/Publication: 2018-08-05 05:50:03 UTC
