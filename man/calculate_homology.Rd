@@ -4,14 +4,19 @@
 \alias{calculate_homology}
 \title{Calculate Persistent Homology of a Point Cloud}
 \usage{
-calculate_homology(mat, dim = 1, threshold = -1)
+calculate_homology(mat, dim = 1, threshold = -1, format = "cloud",
+  standardize = FALSE)
 }
 \arguments{
-\item{mat}{numeric matrix containing point cloud}
+\item{mat}{numeric matrix containing point cloud or distance matrix}
 
 \item{dim}{maximum dimension of features to calculate}
 
 \item{threshold}{maximum diameter for computation of Vietoris-Rips complexes}
+
+\item{format}{format of `mat`, either "cloud" for point cloud or "distmat" for distance matrix}
+
+\item{standardize}{boolean determining whether point cloud size should be standardized}
 }
 \value{
 3-column matrix, with each row representing a TDA feature
@@ -27,6 +32,8 @@ The `mat` parameter should be a numeric matrix with each row corresponding
 to a single point, and each column corresponding to a single dimension. Thus,
 if `mat` has 50 rows and 5 columns, it represents a point cloud with 50 points
 in 5 dimensions. The `dim` parameter should be a positive integer.
+Alternatively, the `mat` parameter could be a distance matrix (upper
+triangular half is ignored); note: `format` should be specified as "ldm".
 }
 \examples{
 

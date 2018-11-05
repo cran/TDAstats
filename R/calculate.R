@@ -9,10 +9,14 @@
 #' to a single point, and each column corresponding to a single dimension. Thus,
 #' if `mat` has 50 rows and 5 columns, it represents a point cloud with 50 points
 #' in 5 dimensions. The `dim` parameter should be a positive integer.
+#' Alternatively, the `mat` parameter could be a distance matrix (upper
+#' triangular half is ignored); note: `format` should be specified as "ldm".
 #'
-#' @param mat numeric matrix containing point cloud
+#' @param mat numeric matrix containing point cloud or distance matrix
 #' @param dim maximum dimension of features to calculate
 #' @param threshold maximum diameter for computation of Vietoris-Rips complexes
+#' @param format  format of `mat`, either "cloud" for point cloud or "distmat" for distance matrix
+#' @param standardize boolean determining whether point cloud size should be standardized
 #' @return 3-column matrix, with each row representing a TDA feature
 #' @importFrom stats complete.cases
 #' @export
@@ -25,8 +29,8 @@
 #'
 #' # calculate persistent homology (num.pts by 3 numeric matrix)
 #' pers.hom <- calculate_homology(pt.cloud)
-calculate_homology <- function(mat, dim = 1, threshold = -1) {
-
+calculate_homology <- function(mat, dim = 1, threshold = -1, format = "cloud",
+                               standardize = FALSE) {
   # make sure matrix has at least 2 columns and at least 2 rows
   if (nrow(mat) < 2 | ncol(mat) < 2) {
     stop("Point cloud must have at least 2 points and at least 2 dimensions.")
@@ -58,9 +62,29 @@ calculate_homology <- function(mat, dim = 1, threshold = -1) {
     stop("threshold parameter must be of type numeric")
   }
   threshold <- as.numeric(threshold)
+  
+  # make sure format is either "cloud" or "distmat"
+  if (!(format %in% c("cloud", "distmat"))) {
+    stop("format parameter should be either \"cloud\" or \"distmat\"")
+  }
+  int.format <- ifelse(format == "cloud", 0, 1)
 
+  # standardize if necessary
+  # method: independently for each coordinate axis: (x - min) / (max - min)
+  if (standardize) {
+    for (i in 1:ncol(mat)) {
+      min.val <- min(mat[, i])
+      max.val <- max(mat[, i])
+      
+      # skip if only one unique value in this column (all identical)
+      if (min.val == max.val) next
+      
+      mat[, i] <- (mat[, i] - min.val) / (max.val - min.val)
+    }
+  }
+  
   # actually do work
-  ans_vec <- ripser_cpp(mat, dim, threshold)
+  ans_vec <- ripser_cpp(mat, dim, threshold, int.format)
 
   # format properly and return
   ans_mat <- matrix(ans_vec,

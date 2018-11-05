@@ -1,365 +1,412 @@
 <!DOCTYPE html>
-<html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Purpose</title>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
 
-<script type="text/javascript">
-window.onload = function() {
-  var imgs = document.getElementsByTagName('img'), i, img;
-  for (i = 0; i < imgs.length; i++) {
-    img = imgs[i];
-    // center an image if it is the only element of its parent
-    if (img.parentElement.childElementCount === 1)
-      img.parentElement.style.textAlign = 'center';
-  }
-};
-</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Styles for R syntax highlighter -->
+<meta name="author" content="Raoul R. Wadhwa, Drew F.K. Williamson, Andrew Dhawan, Jacob G. Scott" />
+
+<meta name="date" content="2018-07-24" />
+
+<title>Introduction to persistent homology with TDAstats</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-   pre .operator,
-   pre .paren {
-     color: rgb(104, 118, 135)
-   }
-
-   pre .literal {
-     color: #990073
-   }
-
-   pre .number {
-     color: #099;
-   }
-
-   pre .comment {
-     color: #998;
-     font-style: italic
-   }
-
-   pre .keyword {
-     color: #900;
-     font-weight: bold
-   }
-
-   pre .identifier {
-     color: rgb(0, 0, 0);
-   }
-
-   pre .string {
-     color: #d14;
-   }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<!-- R syntax highlighter -->
-<script type="text/javascript">
-var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
-hljs.initHighlightingOnLoad();
-</script>
-
-<!-- MathJax scripts -->
-<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
 
 
-<style type="text/css">
-body, td {
-   font-family: sans-serif;
-   background-color: white;
-   font-size: 13px;
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
 }
-
-body {
-  max-width: 800px;
-  margin: auto;
-  padding: 1em;
-  line-height: 20px;
+#header {
+text-align: center;
 }
-
-tt, code, pre {
-   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
 }
-
-h1 {
-   font-size:2.2em;
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
 }
-
-h2 {
-   font-size:1.8em;
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
 }
-
-h3 {
-   font-size:1.4em;
+#TOC ul ul {
+margin-left: -2em;
 }
-
-h4 {
-   font-size:1.0em;
+#TOC li {
+line-height: 16px;
 }
-
-h5 {
-   font-size:0.9em;
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
 }
-
-h6 {
-   font-size:0.8em;
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
 }
-
-a:visited {
-   color: rgb(50%, 0%, 50%);
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
 }
-
-pre, img {
-  max-width: 100%;
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
 }
 pre {
-  overflow-x: auto;
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
 }
-pre code {
-   display: block; padding: 0.5em;
+pre:not([class]) {
+background-color: #f7f7f7;
 }
-
 code {
-  font-size: 92%;
-  border: 1px solid #ccc;
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
 }
-
-code[class] {
-  background-color: #F8F8F8;
+p > code, li > code {
+padding: 2px 0px;
 }
-
-table, td, th {
-  border: none;
+div.figure {
+text-align: center;
 }
-
-blockquote {
-   color:#666666;
-   margin:0;
-   padding-left: 1em;
-   border-left: 0.5em #EEE solid;
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
 }
-
-hr {
-   height: 0px;
-   border-bottom: none;
-   border-top-width: thin;
-   border-top-style: dotted;
-   border-top-color: #999999;
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
 }
-
-@media print {
-   * {
-      background: transparent !important;
-      color: black !important;
-      filter:none !important;
-      -ms-filter: none !important;
-   }
-
-   body {
-      font-size:12pt;
-      max-width:100%;
-   }
-
-   a, a:visited {
-      text-decoration: underline;
-   }
-
-   hr {
-      visibility: hidden;
-      page-break-before: always;
-   }
-
-   pre, blockquote {
-      padding-right: 1em;
-      page-break-inside: avoid;
-   }
-
-   tr, img {
-      page-break-inside: avoid;
-   }
-
-   img {
-      max-width: 100% !important;
-   }
-
-   @page :left {
-      margin: 15mm 20mm 15mm 10mm;
-   }
-
-   @page :right {
-      margin: 15mm 10mm 15mm 20mm;
-   }
-
-   p, h2, h3 {
-      orphans: 3; widows: 3;
-   }
-
-   h2, h3 {
-      page-break-after: avoid;
-   }
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
 }
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
-
-
 
 </head>
 
 <body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to persistent homology with TDAstats</h1>
+<h4 class="author"><em>Raoul R. Wadhwa, Drew F.K. Williamson, Andrew Dhawan, Jacob G. Scott</em></h4>
+<h4 class="date"><em>24 July 2018</em></h4>
+
+
+
+<div id="purpose" class="section level2">
 <h2>Purpose</h2>
-
-<p>TDAstats is intended to be a comprehensive R pipeline to conduct topological data analysis, specifically, using persistent homology of a Vietoris-Rips complex to identify significant features within high-dimensional datasets.
-The three primary functions of TDAstats mirror the functionality of tools used to conduct traditional statistical analysis (e.g. simple linear regression).
-Listed below are the three functions and their analogs in simple linear regression.</p>
-
-<ol>
+<p>TDAstats is intended to be a comprehensive R pipeline to conduct topological data analysis, specifically, using persistent homology of a Vietoris-Rips complex to identify significant features within high-dimensional datasets. The three primary functions of TDAstats mirror the functionality of tools used to conduct traditional statistical analysis (e.g. simple linear regression). Listed below are the three functions and their analogs in simple linear regression.</p>
+<ol style="list-style-type: decimal">
 <li><strong>Calculation of persistent homology:</strong> analogous to calculating the slope and intercept of a line of best fit.</li>
 <li><strong>Visualization of persistent homology:</strong> analogous to plotting a scatterplot to visualize a dataset.</li>
-<li><strong>Hypothesis testing on persistent homology:</strong> analogous to conducting Student&#39;s <em>t</em>-test to determine if two sets of data have significantly differing means.</li>
+<li><strong>Hypothesis testing on persistent homology:</strong> analogous to conducting Student’s <em>t</em>-test to determine if two sets of data have significantly differing means.</li>
 </ol>
-
-<p>To learn more about the computation of persistent homology, see @roadmap-ph.</p>
-
+<p>To learn more about the computation of persistent homology, see <span class="citation">Otter et al. (2017)</span>.</p>
+</div>
+<div id="installation" class="section level2">
 <h2>Installation</h2>
-
-<p>TDAstats is available on CRAN. The development version can also be installed from its <a href="https://github.com/rrrlw/TDAstats">GitHub repo</a>.
-Use the appropriate selections of the R code below to install your preferred version.</p>
-
+<p>TDAstats is available on CRAN. The development version can also be installed from its <a href="https://github.com/rrrlw/TDAstats">GitHub repo</a>. Use the appropriate selections of the R code below to install your preferred version.</p>
 <p><em>N.B.:</em> if you are new to R, installing TDAstats from CRAN is recommended. The development version on GitHub may be unstable.</p>
-
-<pre><code class="r"># install development version of TDAstats - advanced users
-devtools::install_github(&quot;rrrlw/TDAstats&quot;)
-
-# install TDAstats from CRAN
-install.packages(&quot;TDAstats&quot;)
-
-# load TDAstats for use
-library(&quot;TDAstats&quot;)
-</code></pre>
-
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install development version of TDAstats - advanced users</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;rrrlw/TDAstats&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># install TDAstats from CRAN</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">install.packages</span>(<span class="st">&quot;TDAstats&quot;</span>)</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co"># load TDAstats for use</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="kw">library</span>(<span class="st">&quot;TDAstats&quot;</span>)</a></code></pre></div>
+</div>
+<div id="sample-dataset" class="section level2">
 <h2>Sample dataset</h2>
-
-<p>In this vignette, we will use the <code>circle2d</code> dataset included in TDAstats.
-The <code>circle2d</code> dataset is a numeric matrix containing the 2-dimensional Cartesian coordinates of 100 points on the circumference of a unit circle centered at the origin.
-To load <code>circle2d</code> and take a quick peek, run the following R code:</p>
-
-<pre><code class="r"># load dataset
-data(circle2d)
-
-# look at the dimensions and class of circle2d
-class(circle2d)
-&gt; [1] &quot;matrix&quot;
-nrow(circle2d)
-&gt; [1] 100
-ncol(circle2d)
-&gt; [1] 2
-
-# take a peek at first 6 rows
-head(circle2d)
-&gt;             [,1]       [,2]
-&gt; [1,] -0.09728967  0.9952561
-&gt; [2,] -0.69421384  0.7197688
-&gt; [3,] -0.89704859 -0.4419319
-&gt; [4,]  0.83824069 -0.5453004
-&gt; [5,]  0.29894927  0.9542690
-&gt; [6,]  0.80302853 -0.5959406
-</code></pre>
-
-<p>Above, each of the 100 rows represents a single point, with each of the 2 columns representing a Cartesian coordinate for a single dimension.
-Column 1 (accessed by <code>circle2d[, 1]</code>) contains the x-coordinates of the 100 points and column 2 (accessed by <code>circle2d[, 2]</code>) contains the respective y-coordinates.
-To confirm that the points in <code>circle2d</code> do lie on the circumference of a circle, we can quickly create a scatterplot.</p>
-
-<pre><code class="r"># scatterplot of circle2d
-plot(circle2d, xlab = &quot;x&quot;, ylab = &quot;y&quot;, main = &quot;Point cloud in circle2d dataset&quot;)
-</code></pre>
-
-<p><img src="data:image/png;base64,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" alt="plot of chunk plot-circle2d"/></p>
-
+<p>In this vignette, we will use the <code>circle2d</code> dataset included in TDAstats. The <code>circle2d</code> dataset is a numeric matrix containing the 2-dimensional Cartesian coordinates of 100 points on the circumference of a unit circle centered at the origin. To load <code>circle2d</code> and take a quick peek, run the following R code:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># load dataset</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">data</span>(circle2d)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># look at the dimensions and class of circle2d</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">class</span>(circle2d)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">1</span>] <span class="st">&quot;matrix&quot;</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="kw">nrow</span>(circle2d)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">1</span>] <span class="dv">100</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw">ncol</span>(circle2d)</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">1</span>] <span class="dv">2</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co"># take a peek at first 6 rows</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="kw">head</span>(circle2d)</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="op">&gt;</span><span class="st">             </span>[,<span class="dv">1</span>]       [,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">1</span>,] <span class="fl">-0.09728967</span>  <span class="fl">0.9952561</span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">2</span>,] <span class="fl">-0.69421384</span>  <span class="fl">0.7197688</span></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">3</span>,] <span class="fl">-0.89704859</span> <span class="fl">-0.4419319</span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">4</span>,]  <span class="fl">0.83824069</span> <span class="fl">-0.5453004</span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">5</span>,]  <span class="fl">0.29894927</span>  <span class="fl">0.9542690</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">6</span>,]  <span class="fl">0.80302853</span> <span class="fl">-0.5959406</span></a></code></pre></div>
+<p>Above, each of the 100 rows represents a single point, with each of the 2 columns representing a Cartesian coordinate for a single dimension. Column 1 (accessed by <code>circle2d[, 1]</code>) contains the x-coordinates of the 100 points and column 2 (accessed by <code>circle2d[, 2]</code>) contains the respective y-coordinates. To confirm that the points in <code>circle2d</code> do lie on the circumference of a circle, we can quickly create a scatterplot.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># scatterplot of circle2d</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">plot</span>(circle2d, <span class="dt">xlab =</span> <span class="st">&quot;x&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;y&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;Point cloud in circle2d dataset&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="calculating-persistent-homology" class="section level2">
 <h2>Calculating persistent homology</h2>
-
-<p>Given that the points in <code>circle2d</code> are uniformly distributed across the circumference of a circle without any error or noise, we expect a single prominent 1-cycle to be present in its persistent homology.
-The <a href="https://github.com/Ripser/ripser">Ripser</a> C++ library is wrapped by R using <a href="https://github.com/RcppCore/Rcpp">Rcpp</a>, and performs calculations on a Vietoris-Rips complex created using the <code>circle2d</code> point cloud [@Rcpp-paper].
-These calculations result in a numeric matrix that contains all the necessary information to characterize the persistence of features within <code>circle2d</code>, and can be performed with a single line of R code using TDAstats.</p>
-
-<pre><code class="r"># calculate persistent homology
-circle.phom &lt;- calculate_homology(circle2d)
-
-# print first 6 features (ordered by dimension and birth)
-head(circle.phom)
-&gt;      dimension birth        death
-&gt; [1,]         0     0 0.0007823978
-&gt; [2,]         0     0 0.0024476588
-&gt; [3,]         0     0 0.0043431663
-&gt; [4,]         0     0 0.0050472712
-&gt; [5,]         0     0 0.0055217817
-&gt; [6,]         0     0 0.0058158724
-
-# print last 6 features (ordered by dimension and birth)
-tail(circle.phom)
-&gt;        dimension     birth     death
-&gt;  [95,]         0 0.0000000 0.1655777
-&gt;  [96,]         0 0.0000000 0.1676424
-&gt;  [97,]         0 0.0000000 0.1724907
-&gt;  [98,]         0 0.0000000 0.1962725
-&gt;  [99,]         0 0.0000000 0.2085510
-&gt; [100,]         1 0.2232352 1.7339087
-</code></pre>
-
-<p>Each row in the homology matrix returned by the <code>calculate_homology</code> function (variable named <code>circle.phom</code>) represents a single feature (cycle).
-The homology matrix has 3 columns in the following order:</p>
-
-<ol>
+<p>Given that the points in <code>circle2d</code> are uniformly distributed across the circumference of a circle without any error or noise, we expect a single prominent 1-cycle to be present in its persistent homology. The <a href="https://github.com/Ripser/ripser">Ripser</a> C++ library is wrapped by R using <a href="https://github.com/RcppCore/Rcpp">Rcpp</a>, and performs calculations on a Vietoris-Rips complex created using the <code>circle2d</code> point cloud <span class="citation">(Eddelbuettel and Francois 2011)</span>. These calculations result in a numeric matrix that contains all the necessary information to characterize the persistence of features within <code>circle2d</code>, and can be performed with a single line of R code using TDAstats.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># calculate persistent homology</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">circle.phom &lt;-<span class="st"> </span><span class="kw">calculate_homology</span>(circle2d)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co"># print first 6 features (ordered by dimension and birth)</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">head</span>(circle.phom)</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="op">&gt;</span><span class="st">      </span>dimension birth        death</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">1</span>,]         <span class="dv">0</span>     <span class="dv">0</span> <span class="fl">0.0007823978</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">2</span>,]         <span class="dv">0</span>     <span class="dv">0</span> <span class="fl">0.0024476588</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">3</span>,]         <span class="dv">0</span>     <span class="dv">0</span> <span class="fl">0.0043431663</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">4</span>,]         <span class="dv">0</span>     <span class="dv">0</span> <span class="fl">0.0050472712</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">5</span>,]         <span class="dv">0</span>     <span class="dv">0</span> <span class="fl">0.0055217817</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">6</span>,]         <span class="dv">0</span>     <span class="dv">0</span> <span class="fl">0.0058158724</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co"># print last 6 features (ordered by dimension and birth)</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="kw">tail</span>(circle.phom)</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="op">&gt;</span><span class="st">        </span>dimension     birth     death</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="op">&gt;</span><span class="st">  </span>[<span class="dv">95</span>,]         <span class="dv">0</span> <span class="fl">0.0000000</span> <span class="fl">0.1655777</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="op">&gt;</span><span class="st">  </span>[<span class="dv">96</span>,]         <span class="dv">0</span> <span class="fl">0.0000000</span> <span class="fl">0.1676424</span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="op">&gt;</span><span class="st">  </span>[<span class="dv">97</span>,]         <span class="dv">0</span> <span class="fl">0.0000000</span> <span class="fl">0.1724907</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="op">&gt;</span><span class="st">  </span>[<span class="dv">98</span>,]         <span class="dv">0</span> <span class="fl">0.0000000</span> <span class="fl">0.1962725</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="op">&gt;</span><span class="st">  </span>[<span class="dv">99</span>,]         <span class="dv">0</span> <span class="fl">0.0000000</span> <span class="fl">0.2085510</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="op">&gt;</span><span class="st"> </span>[<span class="dv">100</span>,]         <span class="dv">1</span> <span class="fl">0.2232352</span> <span class="fl">1.7339087</span></a></code></pre></div>
+<p>Each row in the homology matrix returned by the <code>calculate_homology</code> function (variable named <code>circle.phom</code>) represents a single feature (cycle). The homology matrix has 3 columns in the following order:</p>
+<ol style="list-style-type: decimal">
 <li><strong>dimension:</strong> if 0, represents a 0-cycle; if 1, represents a 1-cycle; and so on.</li>
 <li><strong>birth:</strong> the radius of the Vietoris-Rips complex at which this feature was first detected.</li>
 <li><strong>death:</strong> the radius of the Vietoris-Rips complex at which this feature was last detected.</li>
 </ol>
-
-<p>Persistence of a feature is generally defined as the length of the interval of the radius within which the feature exists.
-This can be calculated as the numerical difference between the second (birth) and third (death) columns of the homology matrix.
-Confirmed in the output of the <code>head</code> and <code>tail</code> functions above, the homology matrix is ordered by dimension, with the birth column used to compare features of the same dimension.
-As expected for <code>circle2d</code>, the homology matrix contains a single prominent 1-cycle (last line of the output of <code>tail</code>).
-Although we suspect the feature to be a persistent 1-cycle, comparison with the other features in the homology matrix is required to confirm that it is sufficiently persistent.
-This task is done far more easily with an appropriate visualization than by eyeballing the contents of <code>circle.phom</code>.</p>
-
+<p>Persistence of a feature is generally defined as the length of the interval of the radius within which the feature exists. This can be calculated as the numerical difference between the second (birth) and third (death) columns of the homology matrix. Confirmed in the output of the <code>head</code> and <code>tail</code> functions above, the homology matrix is ordered by dimension, with the birth column used to compare features of the same dimension. As expected for <code>circle2d</code>, the homology matrix contains a single prominent 1-cycle (last line of the output of <code>tail</code>). Although we suspect the feature to be a persistent 1-cycle, comparison with the other features in the homology matrix is required to confirm that it is sufficiently persistent. This task is done far more easily with an appropriate visualization than by eyeballing the contents of <code>circle.phom</code>.</p>
+</div>
+<div id="visualizing-persistent-homology" class="section level2">
 <h2>Visualizing persistent homology</h2>
-
-<p>TDAstats uses the <a href="http://ggplot2.org">ggplot2</a> R package to create visualizations for persistent homology [@ggplot2-book].
-One method of visualizing persistent homology is the topological barcode.
-Each feature is depicted by a single bar (ergo, a topological <em>barcode</em>) with its left edge at feature birth and its right edge at feature death.
-Thus, the persistence of a feature is depicted as the length of the bar.
-The horizontal axis of the barcode represents the Vietoris-Rips complex radius; the vertical axis is not inherently meaningful and is not strictly ordered.
-By convention, the order of features is in reverse of the order in the homology matrix.
-Hence, the dimension of features increases as you go higher up the vertical axis, as does the value of feature birth.
-For ease of interpretation, feature dimension is coded as the bar&#39;s color, with an accompanying legend.</p>
-
-<pre><code class="r"># plot topological barcode
-plot_barcode(circle.phom)
-</code></pre>
-
-<p><img src="data:image/png;base64,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" alt="plot of chunk plot-barcode"/></p>
-
-<p>In the topological barcode plotted above, we see a number of 0-cycles (red bars).
-However, of interest to us is the single 1-cycle at the top of the barcode (blue bar).
-A quick visual evaluation of the barcode confirms that the 1-cycle is clearly a significant feature (the blue bar is relatively long), as expected for <code>circle2d</code>.
-Congratulations, you have successfully used TDAstats to conduct topological data analysis on a point cloud!</p>
-
-<p>Another method of visualizing persistent homology is the persistence diagram.
-Each feature is depicted by a single point with the horizontal axis representing feature birth and the vertical axis representing feature death.
-The line \(y = x\) is included as a reference.
-Since feature birth always precedes feature death (\(x < y\)), all points in a persistence diagram lie above the reference line.
-In persistence diagrams, the persistence of a feature is depicted as the vertical distance between the point representing the feature and the reference line.
-Just like topological barcodes, feature dimension is coded as the point&#39;s color, with an accompanying legend; however, feature dimension is redundantly coded as point shape in case of issues with color differentiation.</p>
-
-<pre><code class="r"># plot persistence diagram
-plot_persist(circle.phom)
-</code></pre>
-
-<p><img src="data:image/png;base64,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" alt="plot of chunk plot-persist"/></p>
-
-<p>In the persistence diagram plotted above, we see a number of 0-cycles (red circles); it is difficult to differentiate individual 0-cycles due to the overlap between points.
-However, the single 1-cycle is distinct (blue triangle), again confirming our initial proposition that the persistent homology of <code>circle2d</code> would be significant for a single prominent 1-cycle.
-When evaluating persistence diagrams, it must be kept in mind that a point&#39;s y-coordinate by itself is not an accurate measure of feature persistence; rather, it is the vertical distance between the point and the reference line that represents persistence.</p>
-
+<p>TDAstats uses the <a href="http://ggplot2.org">ggplot2</a> R package to create visualizations for persistent homology <span class="citation">(Wickham 2009)</span>. One method of visualizing persistent homology is the topological barcode. Each feature is depicted by a single bar (ergo, a topological <em>barcode</em>) with its left edge at feature birth and its right edge at feature death. Thus, the persistence of a feature is depicted as the length of the bar. The horizontal axis of the barcode represents the Vietoris-Rips complex radius; the vertical axis is not inherently meaningful and is not strictly ordered. By convention, the order of features is in reverse of the order in the homology matrix. Hence, the dimension of features increases as you go higher up the vertical axis, as does the value of feature birth. For ease of interpretation, feature dimension is coded as the bar’s color, with an accompanying legend.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># plot topological barcode</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">plot_barcode</span>(circle.phom)</a></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAGwCAMAAAB2PiqAAAAAxlBMVEUAAAAAADoAAGYAOpAAZrYAv8QzMzM6AAA6ADo6AGY6Ojo6OpA6kNtNTU1NTW5NTY5NbqtNjshmAABmADpmAGZmtrZmtv9uTW5uTY5ubqtuq+SOTU2OTW6OTY6OyP+QOgCQkDqQkGaQtpCQ27aQ2/+rbk2rbm6rbo6ryKur5P+2ZgC225C22/+2///Ijk3I///bkDrb/9vb///kq27k///y8vL4dm3/tmb/yI7/25D/27b/29v/5Kv//7b//8j//9v//+T////jJaaCAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAKO0lEQVR4nO3dDXfbZh3GYSf1lhaSMVIIMGBhowMayGa6l8ywLPX3/1KT5JfISZu321L1HF3XOV0TR7Fk9Ov/eZyzjskCApMPfQGUTUBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBEBEREQEQERKSfgD6iS73cw/cwgYgIiIiAiDw+oB8eq4OrZjBMICICItL1EtbBJTMkJhARARHpbgnr4GIZHhOIiICICIhIZ3ugDq6VATKBiAiIiCWMiAlEREBEBESkoz1QB1fKIJlARAREpJslrIMLZZhMICICIiIgIp3sgTq4TgbKBCIiICJdLGEdXCZDZQIRERARARGxByJiAhEREJEOlrAOrpLBMoGICIiIgIjsfg/UwUUyXCYQEQERsYQRMYGICIiIgIjYAxExgYgIiMjOl7AOrpEBM4GICIiIgIjseA/UwRUyaCYQEQER2ekS1sH1MXAmEBEBEREQEXsgIiYQEQER2eUS1sHlMXQmEBEBEREQkR3ugTq4OgbPBCIiICKWMCImEBEBEREQkZ3tgTq4NgpgAhEREBFLGBETiIiAiAiIiD0QEROIiICI7GoJ6+DSKIEJRERARAREZDd7oA4ujDKYQEQERMQSRsQEIiIgIgIiYg9ExAQiIiAiO1nCOrguCmECEREQEUsYEROIiICICIjILvZAHVwWpTCBiAiIyA6WsA6uimKYQEQERERARPI9UAcXRTlMICICIhIvYR1cEwUxgYgIiIiAiNgDETGBiAiIiCWMiAlEREBEBETEHoiICUREQEQsYURMICICIiIgIukeqINLoiQmEBEBEbGEETGBiAiIiIDG52L/fP781YMOvf84e6DxqQLa3ZOZQOMjIJ7s8niy90WzhM2ff3kwmRzOq3+cLBZXp5NJ1dXywerz+uHq93oJq780XVx/aVu4hO3kRdGby+PD6tcyoINnbxazSf2P/fOr0yqR2bM3ywdXe6T5wUn1e/2l+tf6Szee0QQalWb1mq0CagbNSbNTbh6/PD5Zfz5/sQxl/aV637360o1nFNCoVEOmquDFcgl7tQqi+sds0jjcPHjWLFtNQM23tI/fIqBReW9A9eOL688XzW6pmVQ7D8geqGCb9ehGQBd7yzC2KqmXtNWX1j86MoFG7vJ4utlEtwO6Oq3mTJXKJqg6tOVBm020gNh+G98KqHmvXo2azecXk83nm7fxljB2zwQiIiAiAiJiD0TEBCIiICLZEtbBBVEWE2hcvn+n4AkFNC4CIjKAgGyBSjaAgCiZgIgMICBLWMkGEBAlExCRuwO6PJ6s/uXoBxPQuNwZ0NXpyWI2fdwT2gONy50BXf7ufLH+G2EPZQKNy/c/3LYJaP7rN4vLlw/773asCWhc7pxA9V8B6z4gK1jJ7gzIBOI+9kBE7nkXdtjDuzBKdmdA/fwcyB6oZHcH9AQm0LgIiMgAArKElWwAAVEyAREREMNiDzQuJhARAREZQEBWsJINICBKJiAiAiIygIDsgUp2X0CP/ffJTKCRuSegi8lj/8/oBDQudwd0tvdl9xPIElay7z+6zRLGg9kDERlAQJawkg0gIEomICICInJfQI9mDzQuAwiIkgmIyAACsoKVbAABUTIBMSwCImIPRMQEIiIgIpYwIiYQEQERERAReyAiJhARARGxhBExgYgIiIiAiNgDETGBiAiIyJOXsA6uhQKZQEQERERAROyBiJhARARExBJGxAQiIiAiAiLy1D1QB5dCiUwgIgIiYgkjYgIRERARARGxByJiAhEREBFLGBETiIiAiAiIiD0QEROIiICIWMKImEBEBEREQESeuAfq4EookglEREBELGFETCAiAiIiICL2QERMICICImIJI2ICEREQEQERsQciYgIRERARSxgRE4iIgIgIiIg9EBETiIiAiDxtCevgQiiTCUREQEQERMQeiIgJRERARJ60hHVwHRTKBCIiICICImIPRMQEIiIgIpYwIiYQEQERecoS1sFlUCoTiIiAiAiIiD0QEROIiICIWMKImEBEBEREQETsgYiYQEQERMQSRsQEIiIgIgIiYg9ExAQiIiAiljAiJhARAREREBF7ICImEBEBEbGEETGBiAiIiICI2AMRMYGICIjIE5awDq6CYplARAREREBE7IGImEBEBETEEkbEBCIiICICIiIgIgIiIiAiAiIiICICIiIgIgIiIiAiAiIiICICIiIgIgIiIiAiAiIiICJ3BzR5h4/f9WDHxnLOXZ50EAG9y8cdXIVzfsiTRgQ0pHMKqCNjOecoAoIWAREREBEBEREQkYcH9POfjz797sZHXbs+07dHR0e/+aaXky5++uM3N87e40n7fKG78OCA3n71+eLb325/1LXWmb7+vI8TNn5c3cD+XmfrpH2+0J14cEA///Wb1Z+S64+6dn2mt/943cP5Gl9/8q/li+vvdbZO2uML3Y0HB/TTn75b/PyX11sfde36TNVqcnTU15/NVTX9vc7WSXt9obvw4IB+/HT9P+f1R127PtNPf3jd3x/O1b3s73W2TtrrC92FQiZQo6/twYecQI2S9kGF7IEaPQfU5x5oBAG9/eqzzbuwz3p7F7Y+U72cvP1nv2/j+3udrZP2+kJ34bE/B6pfZ98/B6rP+e3R0Sd9rib9vs7WSft8obvgJ9FEBEREQEQERERARAREREBESg3o6nTa/D6bzp+/2jz6v/9sH9X+2vK7ln/p7vD2l24fseVi//w93zFypQa0mO2fL+r7fdJ67N5bfHXahDE/OHnsERfN6bil2ICWscxfnN967A6rPBZn08ceIaD3KDagxVl9p2fTppp64anWmIN66ak/ntZp/W2y/+/qa/Wjk9U8aeVRfdv8+ReTybM3i/Yh7YCah6tPL48ne180S1hT6PzGk45buQFdVLe+XsGq+9lsiGbP3ixbmja/5gfTxWJzzw+28riYNN82P9g/bw5tHdI64vL4pFkpL48Pq4+3Atp60nErN6DLl6+aFay6mc36Ut3v+r42H9db3vr21ve6vcitt8irL73jkNYR/69m0+bZZ9sBvbCgrZQbUL2GzZZTZrZ659QE1KxJrdXmrFnRlpr5Mj+oh8z6kHrOtA5pHVHPoclk79WsecYX5+970nErOKCLZ/89XY6Q5hYvlrf2VkDNHmb/vI7scLlAXawn0Dqg1SH1U7SOuDzee7V59hsBtb5j5AoO6PLll/VKUi8ye8t3X01A9cfrn9qs35YtK9nscM72z6+XsNVqtDqkdUSTYvV0m0VxK6DrJx23ggNanP2qXkaaTXR1r6tbXd/SzSZ6da+b27++55uf8kzbm+j2Ia0j6hTnB/WzTteb6Ho/fXW6t/2k41ZyQM1Cs3kbX0+es8l08zZ+PSyWG5nld6zfpM+a/VLzNn66WLQPaR1Rb3T2/n580nob37x9//3L7Scdt5IDShkhOyAgIgIiMuaA2AEBEREQEQERERARAREREJFfAMkvztuQniLaAAAAAElFTkSuQmCC" /><!-- --></p>
+<p>In the topological barcode plotted above, we see a number of 0-cycles (red bars). However, of interest to us is the single 1-cycle at the top of the barcode (blue bar). A quick visual evaluation of the barcode confirms that the 1-cycle is clearly a significant feature (the blue bar is relatively long), as expected for <code>circle2d</code>. Congratulations, you have successfully used TDAstats to conduct topological data analysis on a point cloud!</p>
+<p>Another method of visualizing persistent homology is the persistence diagram. Each feature is depicted by a single point with the horizontal axis representing feature birth and the vertical axis representing feature death. The line <span class="math inline">\(y = x\)</span> is included as a reference. Since feature birth always precedes feature death (<span class="math inline">\(x &lt; y\)</span>), all points in a persistence diagram lie above the reference line. In persistence diagrams, the persistence of a feature is depicted as the vertical distance between the point representing the feature and the reference line. Just like topological barcodes, feature dimension is coded as the point’s color, with an accompanying legend; however, feature dimension is redundantly coded as point shape in case of issues with color differentiation.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># plot persistence diagram</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">plot_persist</span>(circle.phom)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>In the persistence diagram plotted above, we see a number of 0-cycles (red circles); it is difficult to differentiate individual 0-cycles due to the overlap between points. However, the single 1-cycle is distinct (blue triangle), again confirming our initial proposition that the persistent homology of <code>circle2d</code> would be significant for a single prominent 1-cycle. When evaluating persistence diagrams, it must be kept in mind that a point’s y-coordinate by itself is not an accurate measure of feature persistence; rather, it is the vertical distance between the point and the reference line that represents persistence.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
 <h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-Rcpp-paper">
+<p>Eddelbuettel, Dirk, and Romain Francois. 2011. “Rcpp: Seamless R and C++ Integration.” <em>Journal of Statistical Software</em> 40:1–18. <a href="https://doi.org/10.18637/jss.v040.i08" class="uri">https://doi.org/10.18637/jss.v040.i08</a>.</p>
+</div>
+<div id="ref-roadmap-ph">
+<p>Otter, Nina, Mason Porter, Ulrike Tillmann, Peter Grindrod, and Heather Harrington. 2017. “A Roadmap for the Computation of Persistent Homology.” <em>EPJ Data Science</em> 6:17. <a href="https://doi.org/10.1140/epjds/s13688-017-0109-5" class="uri">https://doi.org/10.1140/epjds/s13688-017-0109-5</a>.</p>
+</div>
+<div id="ref-ggplot2-book">
+<p>Wickham, Hadley. 2009. <em>Ggplot2: Elegant Graphics for Data Analysis</em>. Springer-Verlag New York. <a href="http://ggplot2.org" class="uri">http://ggplot2.org</a>.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 </body>
-
 </html>
