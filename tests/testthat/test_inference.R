@@ -95,6 +95,28 @@ test_that("permutation_test detects invalid parameters correctly", {
                "Permutation test must have at least 2 iterations \\(preferably more\\)\\.")
 })
 
+test_that("Bootstrap for identification of significant features is working", {
+  # do bootstrap on an annulus
+  angles <- runif(100, 0, 2 * pi)
+  x <- cos(angles) + rnorm(100, 0, 0.1)
+  y <- sin(angles) + rnorm(100, 0, 0.1)
+  annulus <- cbind(x, y)
+  
+  phom <- calculate_homology(annulus, return_df = TRUE)
+  
+  thresh <- id_significant(phom,
+                           dim = 1,
+                           reps = 500,
+                           cutoff = 0.975)
+  
+  # check if exactly one feature is above the threshold
+  phom <- phom[phom$dim == 1, ]
+  phom$persist <- phom$death - phom$birth
+  test_sol <- sum(phom$persist >= thresh)
+  
+  expect_equal(test_sol, 1)
+})
+
 test_that("Distance between persistent homology is calculated correctly", {
   # equal persistent homologies should have no difference
   phom.1 <- matrix(c(0, 0, 1,
@@ -136,4 +158,15 @@ test_that("Distance between persistent homology is calculated correctly", {
                         1, -1, 0), ncol = 3, byrow = TRUE)
   expect_error(phom.dist(phom.1, phom.temp),
                "A homology matrix cannot contain any negative values\\.")
+  
+  # make sure phom.dist makes a difference (<= phom.dist without limit.num)
+  data("unif2d")
+  data("circle2d")
+  phom.unif <- calculate_homology(unif2d, dim = 1)
+  phom.circ <- calculate_homology(circle2d, dim = 1)
+  
+  dists <- phom.dist(phom.unif, phom.circ)
+  dists2<- phom.dist(phom.unif, phom.circ, limit.num = 2)
+  expect_lte(dists2[1], dists[1])
+  expect_lte(dists2[2], dists[2])
 })

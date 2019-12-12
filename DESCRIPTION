@@ -1,12 +1,14 @@
 Package: TDAstats
 Type: Package
 Title: Pipeline for Topological Data Analysis
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
     person("Raoul", "Wadhwa", email = "raoulwadhwa@gmail.com", role = c("aut", "cre")),
     person("Andrew", "Dhawan", role = "aut"),
     person("Drew", "Williamson", role = "aut"),
-    person("Jacob", "Scott", role = "aut"))
+    person("Jacob", "Scott", role = "aut"),
+    person("Jason Cory", "Brunson", role = "ctb"),
+    person("Shota", "Ochi", role = "ctb"))
 Description: A comprehensive toolset for any
     useR conducting topological data analysis, specifically via the
     calculation of persistent homology in a Vietoris-Rips complex.
@@ -40,11 +42,13 @@ SystemRequirements: C++11
 Suggests: testthat (>= 2.0.0), knitr, rmarkdown, covr
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2018-11-05 16:49:30 UTC; WADHWAR
+Packaged: 2019-12-12 20:31:51 UTC; rrrlw
 Author: Raoul Wadhwa [aut, cre],
   Andrew Dhawan [aut],
   Drew Williamson [aut],
-  Jacob Scott [aut]
+  Jacob Scott [aut],
+  Jason Cory Brunson [ctb],
+  Shota Ochi [ctb]
 Maintainer: Raoul Wadhwa <raoulwadhwa@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-11-05 19:20:11 UTC
+Date/Publication: 2019-12-12 22:30:03 UTC
