@@ -1,21 +1,21 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = ">"
 )
 library("TDAstats")
 
-## ----install-package, eval = FALSE---------------------------------------
-#  # install development version of TDAstats - advanced users
-#  devtools::install_github("rrrlw/TDAstats")
-#  
-#  # install TDAstats from CRAN
-#  install.packages("TDAstats")
-#  
-#  # load TDAstats for use
-#  library("TDAstats")
+## ----install-package, eval = FALSE--------------------------------------------
+# # install development version of TDAstats - advanced users
+# devtools::install_github("rrrlw/TDAstats")
+# 
+# # install TDAstats from CRAN
+# install.packages("TDAstats")
+# 
+# # load TDAstats for use
+# library("TDAstats")
 
-## ----load-data-----------------------------------------------------------
+## ----load-data----------------------------------------------------------------
 # load dataset
 data(circle2d)
 
@@ -27,11 +27,11 @@ ncol(circle2d)
 # take a peek at first 6 rows
 head(circle2d)
 
-## ----plot-circle2d, fig.width = 4, fig.height = 4.5----------------------
+## ----plot-circle2d, fig.width = 4, fig.height = 4.5---------------------------
 # scatterplot of circle2d
 plot(circle2d, xlab = "x", ylab = "y", main = "Point cloud in circle2d dataset")
 
-## ----calc-hom------------------------------------------------------------
+## ----calc-hom-----------------------------------------------------------------
 # calculate persistent homology
 circle.phom <- calculate_homology(circle2d)
 
@@ -41,11 +41,11 @@ head(circle.phom)
 # print last 6 features (ordered by dimension and birth)
 tail(circle.phom)
 
-## ----plot-barcode, fig.height = 4.5, fig.width = 6-----------------------
+## ----plot-barcode, fig.height = 4.5, fig.width = 6----------------------------
 # plot topological barcode
 plot_barcode(circle.phom)
 
-## ----plot-persist, fig.height = 4.5, fig.width = 6-----------------------
+## ----plot-persist, fig.height = 4.5, fig.width = 6----------------------------
 # plot persistence diagram
 plot_persist(circle.phom)
 

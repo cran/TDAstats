@@ -1,24 +1,24 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = ">"
 )
 
-## ----load----------------------------------------------------------------
+## ----load---------------------------------------------------------------------
 # load TDAstats
 library("TDAstats")
 
 # load unif2d dataset
 data("unif2d")
 
-## ----calcpc, fig.height = 4.5, fig.width = 6-----------------------------
+## ----calcpc, fig.height = 4.5, fig.width = 6----------------------------------
 # calculate persistent homology
 data.phom <- calculate_homology(unif2d)
 
 # visualize persistent homology
 plot_barcode(data.phom)
 
-## ----calcdist------------------------------------------------------------
+## ----calcdist-----------------------------------------------------------------
 # calculates the distance between two points
 calc.dist <- function(point1, point2) {
   sqrt(sum((point1 - point2) ^ 2))
@@ -40,7 +40,7 @@ calc.distmat <- function(point.cloud) {
   return(ans.mat)
 }
 
-## ----calcdistmat, fig.height = 4.5, fig.width = 6------------------------
+## ----calcdistmat, fig.height = 4.5, fig.width = 6-----------------------------
 # calculate distance matrix for unif2d
 dist.unif2d <- calc.distmat(unif2d)
 
@@ -50,13 +50,13 @@ dist.phom <- calculate_homology(dist.unif2d, format = "distmat")
 # visualize persistent homology
 plot_barcode(dist.phom)
 
-## ----plotcmp, fig.height = 2.6, fig.width = 3.4, fig.show = "hold"-------
+## ----plotcmp, fig.height = 2.6, fig.width = 3.4, fig.show = "hold"------------
 # plot barcode for point cloud
 plot_barcode(data.phom)
 
 # plot barcode for distance matrix
 plot_barcode(dist.phom)
 
-## ----checkidentical------------------------------------------------------
+## ----checkidentical-----------------------------------------------------------
 identical(data.phom, dist.phom)
 
